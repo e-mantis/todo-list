@@ -8,7 +8,6 @@ import styles from "./App.module.scss";
 
 function App() {
   const [tasks, setTasks] = useState([]);
-  const [completedTasks, setCompletedTasks] = useState(new Set());
 
   const handleAddTask = (newTask) => {
     console.log("handleAddTask called with:", newTask); // ✅ Check if function is running
@@ -32,26 +31,12 @@ function App() {
         i === index ? { ...task, text: newTaskText } : task
       );
 
-      setCompletedTasks((prev) => {
-        const newCompleted = new Set(prev);
-        newCompleted.delete(prevTasks[index].text);
-        return newCompleted;
-      });
-
       return updatedTasks;
     });
   };
 
   const removeTask = (index) => {
     setTasks((prevTasks) => {
-      const taskToRemove = prevTasks[index].text; // Get the correct task before updating
-
-      setCompletedTasks((prev) => {
-        const newCompleted = new Set(prev); //copy of completedTasks bc we should never modify a state directly
-        newCompleted.delete(taskToRemove); // Use the correct reference, removes task from the completed list
-        return newCompleted;
-      });
-
       return prevTasks.filter((_, i) => i !== index); // Removes the task, (_, i) = bv. (task, i)
     });
   };
@@ -73,7 +58,7 @@ function App() {
           tasks={tasks}
           updateTask={updateTask}
           removeTask={removeTask}
-          completedTasks={completedTasks}
+       
           toggleTaskCompletion={toggleTaskCompletion}
         />
       </div>
