@@ -5,6 +5,10 @@
   gap: 1rem;
   width: 100%;
 
+  @media (max-width: 577px) {
+    flex-direction: column;
+  }
+
   &__input {
     font-size: $font-size;
     padding: 0.8rem;

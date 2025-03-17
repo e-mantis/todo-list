@@ -44,5 +44,11 @@
   
     &__icon {
       padding-right: 1rem;
+
+      &--check{
+        color: green;
+        font-size: 1.4rem;
+        padding-top: 0.3rem;
+      }
     }
   }

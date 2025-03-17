@@ -1,13 +1,20 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { isTaskValid } from "../helpers";
 import styles from "./AddTask.module.scss";
 
 const AddTask = ({ add }) => {
   const [todoText, setTodoText] = useState("");
+  const taskIdCounter = useRef(1);
 
-  const handleAddTask = () => {
-    if (!isTaskValid(todoText)) return;
-    add(todoText);
+  const handleAddTask = (taskText) => {
+    const newTask = {
+      id: taskIdCounter.current++,
+      text: todoText,
+      completed: false,
+    };
+
+    if (!isTaskValid({ text: todoText })) return;
+    add(newTask);
     setTodoText("");
   };
 
@@ -24,7 +31,7 @@ const AddTask = ({ add }) => {
         id="addTodo"
       />
       <button
-        disabled={!isTaskValid(todoText)}
+        disabled={!isTaskValid({ text: todoText })}
         className={`btn btn-theme-primary ${styles["c-add-task__button"]}`}
         id="push"
         onClick={handleAddTask}

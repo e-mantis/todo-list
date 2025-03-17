@@ -5,27 +5,18 @@ const ToDoList = ({
   tasks,
   updateTask,
   removeTask,
-  completedTasks,
-  setCompletedTasks,
+  toggleTaskCompletion,
 }) => {
   const [editingIndex, setEditingIndex] = useState(null);
   const [editText, setEditText] = useState("");
 
   const toggleTask = (task) => {
-    setCompletedTasks((prev) => {
-      const newCompleted = new Set(prev);
-      if (newCompleted.has(task)) {
-        newCompleted.delete(task);
-      } else {
-        newCompleted.add(task);
-      }
-      return newCompleted;
-    });
+    toggleTaskCompletion(task.id);
   };
 
   const handleEdit = (index, task) => {
     setEditingIndex(index);
-    setEditText(task); // bestaande tekst laten staan bij editen
+    setEditText(task.text); // bestaande tekst laten staan bij editen
   };
 
   const saveEdit = (index) => {
@@ -37,7 +28,7 @@ const ToDoList = ({
     <>
       {tasks.length > 0 && (
         <p>
-          ✅ {completedTasks.size} / {tasks.length} tasks completed
+          <i className={`${styles["c-list__icon--check"]} bi bi-check`}></i> {tasks.filter((task) => task.completed).length} / {tasks.length} tasks completed
         </p>
       )}
 
@@ -58,10 +49,10 @@ const ToDoList = ({
               <span
                 onClick={() => toggleTask(task)}
                 className={`c-list__item ${
-                  completedTasks.has(task) ? styles["c-list__item--done"] : ""
+                  task.completed ? styles["c-list__item--done"] : ""
                 }`}
               >
-                {task}
+                {task.text}
               </span>
             )}
 

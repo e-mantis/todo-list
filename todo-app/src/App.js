@@ -10,32 +10,42 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [completedTasks, setCompletedTasks] = useState(new Set());
 
-  const handleAddTask = (taskText) => {
-    if (!isTaskValid(taskText)) return;
-    setTasks((prevTasks) => [...prevTasks, taskText]);
+  const handleAddTask = (newTask) => {
+    console.log("handleAddTask called with:", newTask); // ✅ Check if function is running
+  
+    if (!isTaskValid(newTask)) {
+      console.log("Task is invalid"); // ✅ Check if validation is blocking it
+      return;
+    }
+  
+    setTasks((prevTasks) => {
+      const updatedTasks = [...prevTasks, newTask];
+
+      return updatedTasks;
+    });
   };
 
   const updateTask = (index, newTaskText) => {
-    if (!isTaskValid(newTaskText)) return;
-
+    if (!isTaskValid({ text: newTaskText })) return; 
+  
     setTasks((prevTasks) => {
       const updatedTasks = prevTasks.map((task, i) =>
-        i === index ? newTaskText : task
+        i === index ? { ...task, text: newTaskText } : task
       );
-
+  
       setCompletedTasks((prev) => {
         const newCompleted = new Set(prev);
-        newCompleted.delete(prevTasks[index]);
+        newCompleted.delete(prevTasks[index].text);
         return newCompleted;
       });
-
+  
       return updatedTasks;
     });
   };
 
   const removeTask = (index) => {
     setTasks((prevTasks) => {
-      const taskToRemove = prevTasks[index]; // Get the correct task before updating
+      const taskToRemove = prevTasks[index].text;  // Get the correct task before updating
 
       setCompletedTasks((prev) => {
         const newCompleted = new Set(prev); //copy of completedTasks bc we should never modify a state directly
@@ -45,6 +55,14 @@ function App() {
 
       return prevTasks.filter((_, i) => i !== index); // Removes the task, (_, i) = bv. (task, i)
     });
+  };
+
+  const toggleTaskCompletion = (taskId) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      )
+    );
   };
 
   return (
@@ -57,7 +75,8 @@ function App() {
           updateTask={updateTask}
           removeTask={removeTask}
           completedTasks={completedTasks}
-          setCompletedTasks={setCompletedTasks}
+        
+          toggleTaskCompletion={toggleTaskCompletion}
         />
       </div>
     </>
