@@ -33,6 +33,7 @@ function App() {
 
       return updatedTasks;
     });
+    
   };
 
   const removeTask = (index) => {
@@ -49,7 +50,10 @@ function App() {
     );
   };
 
+  console.log("Current tasks:", tasks);
+
   return (
+   
     <>
       <div className={styles["c-container"]}>
         <Header />

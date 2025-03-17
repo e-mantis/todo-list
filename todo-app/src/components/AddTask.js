@@ -1,14 +1,14 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { isTaskValid } from "../helpers";
 import styles from "./AddTask.module.scss";
+import { v4 as uuidv4 } from "uuid"; 
 
 const AddTask = ({ add }) => {
   const [todoText, setTodoText] = useState("");
-  const taskIdCounter = useRef(1);
 
   const handleAddTask = () => {
     const newTask = {
-      id: taskIdCounter.current++,
+      id: uuidv4(),
       text: todoText,
       completed: false,
     };

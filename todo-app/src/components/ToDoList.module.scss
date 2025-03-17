@@ -1,54 +1,72 @@
-@import "./variables"; 
+@import "./variables";
 
 .c-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: flex-start;
-    padding: 0;
-    width: 100%;
-  
-    &__item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background-color: $primary-bg;
-      inset: none;
-  
-      font-size: $font-size;
-      border-radius: $border-radius;
-      width: 100%;
-  
-      &:hover {
-        cursor: pointer;
-      }
-  
-      &--form {
-        padding: 1rem;
-        width: 100%;
-        background-color: $form-bg;
-        font-size: $font-size;
-        border: none;
-      }
-  
-      &--done {
-        text-decoration: line-through;
-        font-style: italic;
-      }
-  
-      span {
-        width: 100%;
-        padding: 1rem;
-      }
-    }
-  
-    &__icon {
-      padding-right: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+  padding: 0;
+  width: 100%;
+  align-items: stretch;
 
-      &--check{
-        color: green;
-        font-size: 1.4rem;
-        padding-top: 0.3rem;
-      }
+  &__icon {
+    &--check {
+      color: green;
+      font-size: 1.4rem;
+      padding-top: 0.3rem;
     }
   }
+}
+
+.c-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: $primary-bg;
+  padding: 1rem;
+  font-size: $font-size;
+  border-radius: $border-radius;
+  width: 100%;
+  box-sizing: border-box;
+
+  & span {
+    width: 100%;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &__form {
+    width: max-content;
+    background-color: $form-bg;
+    font-size: $font-size;
+    border: none;
+    width: 100%;
+    padding: 0.3rem;
+
+    &:focus-visible {
+      font-style: italic;
+      color: $dark-purple;
+    }
+  }
+
+  &--done {
+    text-decoration: line-through;
+    font-style: italic;
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 1rem;
+  }
+
+  &__button {
+    border: none;
+    background-color: transparent;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
