@@ -1,0 +1,48 @@
+@import "./variables"; 
+
+.c-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+    padding: 0;
+    width: 100%;
+  
+    &__item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: $primary-bg;
+      inset: none;
+  
+      font-size: $font-size;
+      border-radius: $border-radius;
+      width: 100%;
+  
+      &:hover {
+        cursor: pointer;
+      }
+  
+      &--form {
+        padding: 1rem;
+        width: 100%;
+        background-color: $form-bg;
+        font-size: $font-size;
+        border: none;
+      }
+  
+      &--done {
+        text-decoration: line-through;
+        font-style: italic;
+      }
+  
+      span {
+        width: 100%;
+        padding: 1rem;
+      }
+    }
+  
+    &__icon {
+      padding-right: 1rem;
+    }
+  }

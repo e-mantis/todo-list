@@ -1,4 +1,5 @@
 import { useState } from "react";
+import styles from "./ToDoList.module.scss";
 
 const ToDoList = ({
   tasks,
@@ -23,7 +24,7 @@ const ToDoList = ({
   };
 
   const handleEdit = (index, task) => {
-    setEditingIndex(index); 
+    setEditingIndex(index);
     setEditText(task); // bestaande tekst laten staan bij editen
   };
 
@@ -40,9 +41,9 @@ const ToDoList = ({
         </p>
       )}
 
-      <ul className="c-list">
+      <ul className={styles["c-list"]}>
         {tasks.map((task, index) => (
-          <li key={index} className="c-list__item">
+          <li key={index} className={styles["c-list__item"]}>
             {editingIndex === index ? (
               <input
                 type="text"
@@ -51,13 +52,13 @@ const ToDoList = ({
                 onBlur={() => saveEdit(index)}
                 onKeyDown={(e) => e.key === "Enter" && saveEdit(index)}
                 autoFocus
-                className="form-control c-list__item--form"
+                className={`form-control ${styles["c-list__item--form"]}`}
               />
             ) : (
               <span
                 onClick={() => toggleTask(task)}
                 className={`c-list__item ${
-                  completedTasks.has(task) ? "c-list__item--done" : ""
+                  completedTasks.has(task) ? styles["c-list__item--done"] : ""
                 }`}
               >
                 {task}
@@ -65,13 +66,13 @@ const ToDoList = ({
             )}
 
             <i
-              className="c-list__icon bi bi-pencil-fill text-primary"
+              className={` ${styles["c-list__icon"]} bi bi-pencil-fill text-primary`}
               style={{ cursor: "pointer" }}
               onClick={() => handleEdit(index, task)}
             ></i>
 
             <i
-              className="c-list__icon bi bi-trash-fill text-danger"
+              className={`${styles["c-list__icon"]} bi bi-trash-fill text-danger`}
               style={{ cursor: "pointer" }}
               onClick={() => removeTask(index)}
             ></i>

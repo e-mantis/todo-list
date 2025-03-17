@@ -1,47 +1,57 @@
 import { useState } from "react";
-import "./App.css";
-import Header from "./Header.js";
-import ToDoList from "./ToDoList.js";
-import AddTask from "./AddTask.js";
+import Header from "./components/Header.js";
+import ToDoList from "./components/ToDoList.js";
+import AddTask from "./components/AddTask.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { isTaskValid } from "./helpers";
+import styles from "./App.module.scss";
 
 function App() {
   const [tasks, setTasks] = useState([]);
   const [completedTasks, setCompletedTasks] = useState(new Set());
 
-  const addTask = (taskText) => {
-    if (taskText.trim() === "");
+  const handleAddTask = (taskText) => {
+    if (!isTaskValid(taskText)) return;
     setTasks((prevTasks) => [...prevTasks, taskText]);
   };
 
   const updateTask = (index, newTaskText) => {
-    if (newTaskText.trim() === "") return;
+    if (!isTaskValid(newTaskText)) return;
 
-    setTasks((prevTasks) =>
-      prevTasks.map((task, i) => (i === index ? newTaskText : task))
-    );
+    setTasks((prevTasks) => {
+      const updatedTasks = prevTasks.map((task, i) =>
+        i === index ? newTaskText : task
+      );
 
-    setCompletedTasks((prev) => {
-      const newCompleted = new Set(prev);
-      newCompleted.delete(tasks[index]);
-      return newCompleted;
+      setCompletedTasks((prev) => {
+        const newCompleted = new Set(prev);
+        newCompleted.delete(prevTasks[index]);
+        return newCompleted;
+      });
+
+      return updatedTasks;
     });
   };
 
   const removeTask = (index) => {
-    setTasks((prevTasks) => prevTasks.filter((_, i) => i !== index)); // (_, i) = bv. (task, i)
-    setCompletedTasks((prev) => {
-      const newCompleted = new Set(prev); //copy of completedTasks bc we should never modify a state directly
-      newCompleted.delete(tasks[index]); //removes task from the completed list
-      return newCompleted;
+    setTasks((prevTasks) => {
+      const taskToRemove = prevTasks[index]; // Get the correct task before updating
+
+      setCompletedTasks((prev) => {
+        const newCompleted = new Set(prev); //copy of completedTasks bc we should never modify a state directly
+        newCompleted.delete(taskToRemove); // Use the correct reference, removes task from the completed list
+        return newCompleted;
+      });
+
+      return prevTasks.filter((_, i) => i !== index); // Removes the task, (_, i) = bv. (task, i)
     });
   };
 
   return (
     <>
-      <div className="c-container">
+      <div className={styles["c-container"]}>
         <Header />
-        <AddTask add={addTask} />
+        <AddTask add={handleAddTask} />
         <ToDoList
           tasks={tasks}
           updateTask={updateTask}

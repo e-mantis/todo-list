@@ -1,16 +1,18 @@
 import { useState } from "react";
+import { isTaskValid } from "../helpers";
+import styles from "./AddTask.module.scss";
 
 const AddTask = ({ add }) => {
   const [todoText, setTodoText] = useState("");
 
   const handleAddTask = () => {
-    if (todoText.trim() === "") return; //prevent lege tasks
-    add(todoText.trim());
-    setTodoText(""); //clear input after add
+    if (!isTaskValid(todoText)) return;
+    add(todoText);
+    setTodoText("");
   };
 
   return (
-    <div className="c-add-task">
+    <div className={styles["c-add-task"]}>
       <input
         value={todoText}
         onChange={(e) => {
@@ -18,17 +20,14 @@ const AddTask = ({ add }) => {
         }}
         onKeyDown={(e) => e.key === "Enter" && handleAddTask()} //task ook toevoegen door 'Enter'
         placeholder="Enter New Task ..."
-        className="form-control c-add-task__input"
+        className={`form-control ${styles["c-add-task__input"]}`}
         id="addTodo"
       />
       <button
-        disabled={todoText.length === 0}
-        className="btn btn-theme-primary c-add-task__button"
+        disabled={!isTaskValid(todoText)}
+        className={`btn btn-theme-primary ${styles["c-add-task__button"]}`}
         id="push"
-        onClick={() => {
-          add(todoText.trim());
-          setTodoText("");
-        }}
+        onClick={handleAddTask}
       >
         Add Task
       </button>
