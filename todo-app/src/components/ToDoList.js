@@ -1,30 +1,22 @@
 import { useState } from "react";
+import styles from "./ToDoList.module.scss";
 
 const ToDoList = ({
   tasks,
   updateTask,
   removeTask,
-  completedTasks,
-  setCompletedTasks,
+  toggleTaskCompletion,
 }) => {
   const [editingIndex, setEditingIndex] = useState(null);
   const [editText, setEditText] = useState("");
 
   const toggleTask = (task) => {
-    setCompletedTasks((prev) => {
-      const newCompleted = new Set(prev);
-      if (newCompleted.has(task)) {
-        newCompleted.delete(task);
-      } else {
-        newCompleted.add(task);
-      }
-      return newCompleted;
-    });
+    toggleTaskCompletion(task.id);
   };
 
   const handleEdit = (index, task) => {
-    setEditingIndex(index); 
-    setEditText(task); // bestaande tekst laten staan bij editen
+    setEditingIndex(index);
+    setEditText(task.text); // bestaande tekst laten staan bij editen
   };
 
   const saveEdit = (index) => {
@@ -36,13 +28,13 @@ const ToDoList = ({
     <>
       {tasks.length > 0 && (
         <p>
-          ✅ {completedTasks.size} / {tasks.length} tasks completed
+          <i className={`${styles["c-list__icon--check"]} bi bi-check`}></i> {tasks.filter((task) => task.completed).length} / {tasks.length} tasks completed
         </p>
       )}
 
-      <ul className="c-list">
+      <ul className={styles["c-list"]}>
         {tasks.map((task, index) => (
-          <li key={index} className="c-list__item">
+          <li key={index} className={styles["c-list__item"]}>
             {editingIndex === index ? (
               <input
                 type="text"
@@ -51,27 +43,27 @@ const ToDoList = ({
                 onBlur={() => saveEdit(index)}
                 onKeyDown={(e) => e.key === "Enter" && saveEdit(index)}
                 autoFocus
-                className="form-control c-list__item--form"
+                className={`form-control ${styles["c-list__item--form"]}`}
               />
             ) : (
               <span
                 onClick={() => toggleTask(task)}
                 className={`c-list__item ${
-                  completedTasks.has(task) ? "c-list__item--done" : ""
+                  task.completed ? styles["c-list__item--done"] : ""
                 }`}
               >
-                {task}
+                {task.text}
               </span>
             )}
 
             <i
-              className="c-list__icon bi bi-pencil-fill text-primary"
+              className={` ${styles["c-list__icon"]} bi bi-pencil-fill text-primary`}
               style={{ cursor: "pointer" }}
               onClick={() => handleEdit(index, task)}
             ></i>
 
             <i
-              className="c-list__icon bi bi-trash-fill text-danger"
+              className={`${styles["c-list__icon"]} bi bi-trash-fill text-danger`}
               style={{ cursor: "pointer" }}
               onClick={() => removeTask(index)}
             ></i>
