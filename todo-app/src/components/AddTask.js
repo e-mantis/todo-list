@@ -6,7 +6,7 @@ const AddTask = ({ add }) => {
   const [todoText, setTodoText] = useState("");
   const taskIdCounter = useRef(1);
 
-  const handleAddTask = (taskText) => {
+  const handleAddTask = () => {
     const newTask = {
       id: taskIdCounter.current++,
       text: todoText,

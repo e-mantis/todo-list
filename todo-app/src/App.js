@@ -12,40 +12,39 @@ function App() {
 
   const handleAddTask = (newTask) => {
     console.log("handleAddTask called with:", newTask); // ✅ Check if function is running
-  
+
     if (!isTaskValid(newTask)) {
       console.log("Task is invalid"); // ✅ Check if validation is blocking it
       return;
     }
-  
+
     setTasks((prevTasks) => {
       const updatedTasks = [...prevTasks, newTask];
-
       return updatedTasks;
     });
   };
 
   const updateTask = (index, newTaskText) => {
-    if (!isTaskValid({ text: newTaskText })) return; 
-  
+    if (!isTaskValid({ text: newTaskText })) return;
+
     setTasks((prevTasks) => {
       const updatedTasks = prevTasks.map((task, i) =>
         i === index ? { ...task, text: newTaskText } : task
       );
-  
+
       setCompletedTasks((prev) => {
         const newCompleted = new Set(prev);
         newCompleted.delete(prevTasks[index].text);
         return newCompleted;
       });
-  
+
       return updatedTasks;
     });
   };
 
   const removeTask = (index) => {
     setTasks((prevTasks) => {
-      const taskToRemove = prevTasks[index].text;  // Get the correct task before updating
+      const taskToRemove = prevTasks[index].text; // Get the correct task before updating
 
       setCompletedTasks((prev) => {
         const newCompleted = new Set(prev); //copy of completedTasks bc we should never modify a state directly
@@ -75,7 +74,6 @@ function App() {
           updateTask={updateTask}
           removeTask={removeTask}
           completedTasks={completedTasks}
-        
           toggleTaskCompletion={toggleTaskCompletion}
         />
       </div>
