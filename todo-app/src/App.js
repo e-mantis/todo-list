@@ -1,72 +1,127 @@
-import { useState } from "react";
 import Header from "./components/Header.js";
-import ToDoList from "./components/ToDoList.js";
-import AddTask from "./components/AddTask.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { isTaskValid } from "./helpers";
+import { useState, useEffect } from "react";
 import styles from "./App.module.scss";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import Home from "./routes/Home";
+import Login from "./routes/Login.js";
+import Dashboard from "./routes/Dashboard.js";
+
+const API_URL = "http://localhost:5002/tasks"; 
 
 function App() {
   const [tasks, setTasks] = useState([]);
 
-  const handleAddTask = (newTask) => {
-    console.log("handleAddTask called with:", newTask); // ✅ Check if function is running
+ 
+  useEffect(() => {
+    fetch(API_URL)
+      .then((res) => res.json())
+      .then((data) => setTasks(data))
+      .catch((err) => console.error("Error fetching tasks:", err));
+  }, []);
 
-    if (!isTaskValid(newTask)) {
-      console.log("Task is invalid"); // ✅ Check if validation is blocking it
+  const handleAddTask = async (newTask) => {
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newTask),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const addedTask = await response.json();
+      setTasks([...tasks, addedTask]);
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
+  };
+
+  const removeTask = async (taskId) => {
+    await fetch(`${API_URL}/${taskId}`, { method: "DELETE" });
+    setTasks(tasks.filter((task) => task.id !== taskId));
+  };
+
+  const updateTask = async (taskId, updatedFields) => {
+    const taskToUpdate = tasks.find((task) => task.id === taskId);
+    if (!taskToUpdate) return;
+
+    // ✅ If `text` exists, ensure it's a string
+    if (updatedFields.text && typeof updatedFields.text !== "string") {
+      console.error("🚨 ERROR: text must be a string!", updatedFields.text);
       return;
     }
 
-    setTasks((prevTasks) => {
-      const updatedTasks = [...prevTasks, newTask];
-      return updatedTasks;
+    const updatedTask = { ...taskToUpdate, ...updatedFields };
+
+    const response = await fetch(`${API_URL}/${taskId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedFields),
     });
+
+    if (!response.ok) {
+      console.error("Error updating task:", response.statusText);
+      return;
+    }
+
+    setTasks(tasks.map((task) => (task.id === taskId ? updatedTask : task)));
   };
 
-  const updateTask = (index, newTaskText) => {
-    if (!isTaskValid({ text: newTaskText })) return;
 
-    setTasks((prevTasks) => {
-      const updatedTasks = prevTasks.map((task, i) =>
-        i === index ? { ...task, text: newTaskText } : task
-      );
 
-      return updatedTasks;
-    });
-    
-  };
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    localStorage.getItem("isAuthenticated") === "true"
+  );
 
-  const removeTask = (index) => {
-    setTasks((prevTasks) => {
-      return prevTasks.filter((_, i) => i !== index); // Removes the task, (_, i) = bv. (task, i)
-    });
-  };
-
-  const toggleTaskCompletion = (taskId) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      )
-    );
-  };
-
-  console.log("Current tasks:", tasks);
+  useEffect(() => {
+    localStorage.setItem("isAuthenticated", isAuthenticated);
+  }, [isAuthenticated]);
 
   return (
-   
-    <>
+    <Router>
+      <Header
+        isAuthenticated={isAuthenticated}
+        setIsAuthenticated={setIsAuthenticated}
+      />
       <div className={styles["c-container"]}>
-        <Header />
-        <AddTask add={handleAddTask} />
-        <ToDoList
-          tasks={tasks}
-          updateTask={updateTask}
-          removeTask={removeTask}
-       
-          toggleTaskCompletion={toggleTaskCompletion}
-        />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/login"
+            element={
+              <Login
+                isAuthenticated={isAuthenticated}
+                setIsAuthenticated={setIsAuthenticated}
+              />
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              isAuthenticated ? (
+                <Dashboard
+                  tasks={tasks}
+                  addTask={handleAddTask}
+                  removeTask={removeTask}
+                  updateTask={updateTask}
+               
+                />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+        </Routes>
       </div>
-    </>
+    </Router>
   );
 }
 export default App;
