@@ -1,63 +1,79 @@
-import { useState } from "react";
 import ToDoList from "../components/ToDoList.js";
 import AddTask from "../components/AddTask.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { isTaskValid } from "../helpers";
 
+export default function Dashboard({
+  tasks,
+  addTask,
+  removeTask,
+  updateTask,
+}) {
+  const handleAddTask = (newTaskText) => {
+    console.log("handleAddTask received:", newTaskText, typeof newTaskText);
 
-export default function Dashboard() {
-  const [tasks, setTasks] = useState([]);
+    if (typeof newTaskText === "object" && newTaskText.text) {
+      console.warn(
+        "⚠️ `newTaskText` is an object, using `newTaskText.text` instead."
+      );
+      newTaskText = newTaskText.text;
+    }
 
-  const handleAddTask = (newTask) => {
-    console.log("handleAddTask called with:", newTask); // ✅ Check if function is running
+    const newTask = {
+      id: crypto.randomUUID(),
+      text: newTaskText,
+      completed: false,
+    };
+    console.log("Created new task:", newTask);
 
     if (!isTaskValid(newTask)) {
-      console.log("Task is invalid"); // ✅ Check if validation is blocking it
+      console.log("Task is invalid:", newTask);
       return;
     }
 
-    setTasks((prevTasks) => {
-      const updatedTasks = [...prevTasks, newTask];
-      return updatedTasks;
-    });
+    addTask(newTask);
   };
 
-  const updateTask = (index, newTaskText) => {
+  const handleUpdateTask = (taskId, newTaskText) => {
+    console.log("handleUpdateTask received:", {
+      taskId,
+      newTaskText,
+      type: typeof newTaskText,
+    });
+
+    if (typeof newTaskText === "object" && newTaskText.text) {
+      console.warn(
+        "⚠️ `newTaskText` is an object, using `newTaskText.text` instead."
+      );
+      newTaskText = newTaskText.text;
+    }
+
     if (!isTaskValid({ text: newTaskText })) return;
 
-    setTasks((prevTasks) => {
-      const updatedTasks = prevTasks.map((task, i) =>
-        i === index ? { ...task, text: newTaskText } : task
-      );
-
-      return updatedTasks;
-    });
+    updateTask(taskId, { text: newTaskText });
   };
 
-  const removeTask = (index) => {
-    setTasks((prevTasks) => {
-      return prevTasks.filter((_, i) => i !== index); // Removes the task, (_, i) = bv. (task, i)
-    });
+  const handleRemoveTask = (taskId) => {
+    removeTask(taskId);
   };
 
-  const toggleTaskCompletion = (taskId) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      )
-    );
+  const handleToggleTaskCompletion = (taskId) => {
+    const taskToUpdate = tasks.find((task) => task.id === taskId);
+
+    if (!taskToUpdate) return;
+
+    updateTask(taskId, { ...taskToUpdate, completed: !taskToUpdate.completed });
   };
 
-  console.log("Current tasks:", tasks);
   return (
     <div>
       <h1>✍️ Task Dashboard</h1>
       <AddTask add={handleAddTask} />
       <ToDoList
         tasks={tasks}
-        updateTask={updateTask}
-        removeTask={removeTask}
-        toggleTaskCompletion={toggleTaskCompletion}
+        updateTask={handleUpdateTask}
+        removeTask={handleRemoveTask}
+        toggleTaskCompletion={handleToggleTaskCompletion}
       />
     </div>
   );

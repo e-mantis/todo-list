@@ -11,9 +11,9 @@ export default function Login({ isAuthenticated, setIsAuthenticated }) {
   const handleLogin = (e) => {
     e.preventDefault();
     if (email === "admin" && password === "admin") {
-      localStorage.setItem("isAuthenticated", "true"); // ✅ Persist login status
+      localStorage.setItem("isAuthenticated", "true"); 
       setIsAuthenticated(true);
-      navigate("/dashboard"); // ✅ Redirect to dashboard
+      navigate("/dashboard"); 
     } else {
       alert("Invalid login. Try again!");
     }

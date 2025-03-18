@@ -6,7 +6,7 @@ const Header = ({ isAuthenticated, setIsAuthenticated }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated"); // ✅ Clear login state
+    localStorage.removeItem("isAuthenticated");
     setIsAuthenticated(false);
     navigate("/login");
   };
@@ -32,8 +32,6 @@ const Header = ({ isAuthenticated, setIsAuthenticated }) => {
                 isActive ? styles.active : "c-link--active"
               }`
             }
-            isAuthenticated={isAuthenticated}
-            setIsAuthenticated={setIsAuthenticated}
           >
             Login
           </NavLink>

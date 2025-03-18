@@ -1,22 +1,28 @@
+
+
+
+
+
+
 import { useState } from "react";
 import styles from "./ToDoList.module.scss";
 
 const ToDoList = ({ tasks, updateTask, removeTask, toggleTaskCompletion }) => {
-  const [editingIndex, setEditingIndex] = useState(null);
+  const [editingTaskId, setEditingTaskId] = useState(null);
   const [editText, setEditText] = useState("");
 
-  const toggleTask = (task) => {
-    toggleTaskCompletion(task.id);
+  const toggleTask = (taskId) => {
+    toggleTaskCompletion(taskId);
   };
 
-  const handleEdit = (index, task) => {
-    setEditingIndex(index);
-    setEditText(task.text); // bestaande tekst laten staan bij editen
+  const handleEdit = (task) => {
+    setEditingTaskId(task.id);
+    setEditText(task.text);
   };
 
-  const saveEdit = (index) => {
-    updateTask(index, editText);
-    setEditingIndex(null);
+  const saveEdit = () => {
+    updateTask(editingTaskId, { text: editText });
+    setEditingTaskId(null);
   };
 
   return (
@@ -31,22 +37,22 @@ const ToDoList = ({ tasks, updateTask, removeTask, toggleTaskCompletion }) => {
 
       <ul className={styles["c-list"]}>
         {tasks.map((task, index) => (
-          <li key={index} className={styles["c-card"]}>
-            {editingIndex === index ? (
+          <li key={task.id} className={styles["c-card"]}>
+            {editingTaskId === task.id ? (
               <div>
                 <input
                   type="text"
                   value={editText}
                   onChange={(e) => setEditText(e.target.value)}
-                  onBlur={() => saveEdit(index)}
-                  onKeyDown={(e) => e.key === "Enter" && saveEdit(index)}
+                  onBlur={() => saveEdit(task.id)}
+                  onKeyDown={(e) => e.key === "Enter" && saveEdit(task.id)}
                   autoFocus
                   className={`form-control ${styles["c-card__form"]}`}
-                />{" "}
+                />
               </div>
             ) : (
               <span
-                onClick={() => toggleTask(task)}
+                onClick={() => toggleTaskCompletion(task.id)}
                 className={`c-card ${
                   task.completed ? styles["c-card--done"] : ""
                 }`}
@@ -55,16 +61,20 @@ const ToDoList = ({ tasks, updateTask, removeTask, toggleTaskCompletion }) => {
               </span>
             )}
             <div className={styles["c-card__buttons"]}>
-              <button className={styles["c-card__button"]} onClick={() => handleEdit(index, task)}>
+              <button
+                className={styles["c-card__button"]}
+                onClick={() => handleEdit(task)}
+              >
                 <i
                   className={` ${styles["c-card__icon"]} bi bi-pencil-fill text-primary`}
-                 
                 ></i>
               </button>
-              <button className={styles["c-card__button"]} onClick={() => removeTask(index)}>
+              <button
+                className={styles["c-card__button"]}
+                onClick={() => removeTask(task.id)}
+              >
                 <i
                   className={`${styles["c-card__icon"]} bi bi-trash-fill text-danger`}
-                 
                 ></i>
               </button>
             </div>
