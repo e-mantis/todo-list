@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { isTaskValid } from "../helpers";
 import styles from "./AddTask.module.scss";
-import { v4 as uuidv4 } from "uuid"; 
+import buttonStyles from "./Button.module.scss";
+import { v4 as uuidv4 } from "uuid";
 
 const AddTask = ({ add }) => {
   const [todoText, setTodoText] = useState("");
@@ -32,7 +33,7 @@ const AddTask = ({ add }) => {
       />
       <button
         disabled={!isTaskValid({ text: todoText })}
-        className={`btn btn-theme-primary ${styles["c-add-task__button"]}`}
+        className={`btn btn-theme-primary ${buttonStyles["c-button"]}`}
         id="push"
         onClick={handleAddTask}
       >
