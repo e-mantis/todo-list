@@ -1,79 +1,90 @@
+import { useEffect, useState } from "react";
 import ToDoList from "../components/ToDoList.js";
 import AddTask from "../components/AddTask.js";
-import "bootstrap-icons/font/bootstrap-icons.css";
 import { isTaskValid } from "../helpers";
 
-export default function Dashboard({
-  tasks,
-  addTask,
-  removeTask,
-  updateTask,
-}) {
-  const handleAddTask = (newTaskText) => {
-    console.log("handleAddTask received:", newTaskText, typeof newTaskText);
+const API_URL = "http://localhost:5002/tasks";
 
-    if (typeof newTaskText === "object" && newTaskText.text) {
-      console.warn(
-        "⚠️ `newTaskText` is an object, using `newTaskText.text` instead."
-      );
-      newTaskText = newTaskText.text;
-    }
+export default function Dashboard() {
+  const [tasks, setTasks] = useState([]);
 
-    const newTask = {
-      id: crypto.randomUUID(),
-      text: newTaskText,
-      completed: false,
-    };
-    console.log("Created new task:", newTask);
+  useEffect(() => {
+    fetch(API_URL)
+      .then((res) => res.json())
+      .then((data) => setTasks(data))
+      .catch((err) => console.error("Error fetching tasks:", err));
+  }, []);
 
-    if (!isTaskValid(newTask)) {
-      console.log("Task is invalid:", newTask);
+  const addTask = async (taskObject) => {
+    if (!isTaskValid(taskObject)) {
+      console.log("Invalid task:", taskObject);
       return;
     }
 
-    addTask(newTask);
-  };
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(taskObject),
+      });
 
-  const handleUpdateTask = (taskId, newTaskText) => {
-    console.log("handleUpdateTask received:", {
-      taskId,
-      newTaskText,
-      type: typeof newTaskText,
-    });
+      if (!res.ok) {
+        throw new Error(`Failed to add task: ${res.statusText}`);
+      }
 
-    if (typeof newTaskText === "object" && newTaskText.text) {
-      console.warn(
-        "⚠️ `newTaskText` is an object, using `newTaskText.text` instead."
-      );
-      newTaskText = newTaskText.text;
+      const addedTask = await res.json();
+      setTasks([...tasks, addedTask]);
+    } catch (err) {
+      console.error("Error adding task:", err);
     }
-
-    if (!isTaskValid({ text: newTaskText })) return;
-
-    updateTask(taskId, { text: newTaskText });
   };
 
-  const handleRemoveTask = (taskId) => {
-    removeTask(taskId);
+  const removeTask = async (taskId) => {
+    await fetch(`${API_URL}/${taskId}`, { method: "DELETE" });
+    setTasks(tasks.filter((task) => task.id !== taskId));
   };
 
-  const handleToggleTaskCompletion = (taskId) => {
+  const updateTask = async (taskId, updatedFields) => {
     const taskToUpdate = tasks.find((task) => task.id === taskId);
-
     if (!taskToUpdate) return;
 
-    updateTask(taskId, { ...taskToUpdate, completed: !taskToUpdate.completed });
+    if (updatedFields.text && typeof updatedFields.text !== "string") {
+      console.error("🚨 Text must be a string!", updatedFields.text);
+      return;
+    }
+
+    const updatedTask = { ...taskToUpdate, ...updatedFields };
+
+    const res = await fetch(`${API_URL}/${taskId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedFields),
+    });
+
+    if (!res.ok) {
+      console.error("Error updating task:", res.statusText);
+      return;
+    }
+
+    setTasks(tasks.map((t) => (t.id === taskId ? updatedTask : t)));
+  };
+
+  const toggleTaskCompletion = async (taskId) => {
+    const task = tasks.find((t) => t.id === taskId);
+    if (!task) return;
+
+    updateTask(taskId, { completed: !task.completed });
   };
 
   return (
     <div>
       <h1>✍️ Task Dashboard</h1>
-      <AddTask add={handleAddTask} />
+      <AddTask add={addTask} />
       <ToDoList
         tasks={tasks}
-        updateTask={handleUpdateTask}
-        removeTask={handleRemoveTask}
-        toggleTaskCompletion={handleToggleTaskCompletion}
+        updateTask={updateTask}
+        removeTask={removeTask}
+        toggleTaskCompletion={toggleTaskCompletion}
       />
     </div>
   );

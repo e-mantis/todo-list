@@ -1,14 +1,9 @@
 {
   "tasks": [
     {
-      "id": "1",
-      "text": "Buy groceries",
-      "completed": true
-    },
-    {
       "id": "ca504a5b-0bc3-4d34-b038-6cf7cfe2a4c4",
       "text": "Wash dishes",
-      "completed": false
+      "completed": true
     },
     {
       "id": "25b9f8f6-b705-468c-b7e7-ee47a110298b",
@@ -23,6 +18,11 @@
     {
       "id": "d30ed333-43bd-4383-9a48-ceaf57c13967",
       "text": "Make a dentist appointment",
+      "completed": false
+    },
+    {
+      "id": "2141de1f-f8f7-4283-a6b2-1e30b1fa6f04",
+      "text": "Buy groceries",
       "completed": false
     }
   ]
