@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "../components/AddTask.module.scss";
 import buttonStyles from "../components/Button.module.scss";
+import { useAuth } from "../context/AuthContext";
 
-export default function Login({ isAuthenticated, setIsAuthenticated }) {
+const Login = () => {
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -11,9 +13,9 @@ export default function Login({ isAuthenticated, setIsAuthenticated }) {
   const handleLogin = (e) => {
     e.preventDefault();
     if (email === "admin" && password === "admin") {
-      localStorage.setItem("isAuthenticated", "true"); 
+      localStorage.setItem("isAuthenticated", "true");
       setIsAuthenticated(true);
-      navigate("/dashboard"); 
+      navigate("/dashboard");
     } else {
       alert("Invalid login. Try again!");
     }
@@ -61,4 +63,6 @@ export default function Login({ isAuthenticated, setIsAuthenticated }) {
       )}
     </>
   );
-}
+};
+
+export default Login;

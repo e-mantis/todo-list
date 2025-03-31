@@ -1,79 +1,21 @@
 import ToDoList from "../components/ToDoList.js";
 import AddTask from "../components/AddTask.js";
-import "bootstrap-icons/font/bootstrap-icons.css";
-import { isTaskValid } from "../helpers";
+import { useTasks } from "../context/TasksContext";
 
-export default function Dashboard({
-  tasks,
-  addTask,
-  removeTask,
-  updateTask,
-}) {
-  const handleAddTask = (newTaskText) => {
-    console.log("handleAddTask received:", newTaskText, typeof newTaskText);
+const API_URL = "http://localhost:5002/tasks";
 
-    if (typeof newTaskText === "object" && newTaskText.text) {
-      console.warn(
-        "⚠️ `newTaskText` is an object, using `newTaskText.text` instead."
-      );
-      newTaskText = newTaskText.text;
-    }
-
-    const newTask = {
-      id: crypto.randomUUID(),
-      text: newTaskText,
-      completed: false,
-    };
-    console.log("Created new task:", newTask);
-
-    if (!isTaskValid(newTask)) {
-      console.log("Task is invalid:", newTask);
-      return;
-    }
-
-    addTask(newTask);
-  };
-
-  const handleUpdateTask = (taskId, newTaskText) => {
-    console.log("handleUpdateTask received:", {
-      taskId,
-      newTaskText,
-      type: typeof newTaskText,
-    });
-
-    if (typeof newTaskText === "object" && newTaskText.text) {
-      console.warn(
-        "⚠️ `newTaskText` is an object, using `newTaskText.text` instead."
-      );
-      newTaskText = newTaskText.text;
-    }
-
-    if (!isTaskValid({ text: newTaskText })) return;
-
-    updateTask(taskId, { text: newTaskText });
-  };
-
-  const handleRemoveTask = (taskId) => {
-    removeTask(taskId);
-  };
-
-  const handleToggleTaskCompletion = (taskId) => {
-    const taskToUpdate = tasks.find((task) => task.id === taskId);
-
-    if (!taskToUpdate) return;
-
-    updateTask(taskId, { ...taskToUpdate, completed: !taskToUpdate.completed });
-  };
-
+export default function Dashboard() {
+  const { tasks, addTask, removeTask, updateTask, toggleTaskCompletion } =
+    useTasks();
   return (
     <div>
       <h1>✍️ Task Dashboard</h1>
-      <AddTask add={handleAddTask} />
+      <AddTask add={addTask} />
       <ToDoList
         tasks={tasks}
-        updateTask={handleUpdateTask}
-        removeTask={handleRemoveTask}
-        toggleTaskCompletion={handleToggleTaskCompletion}
+        updateTask={updateTask}
+        removeTask={removeTask}
+        toggleTaskCompletion={toggleTaskCompletion}
       />
     </div>
   );
