@@ -21,27 +21,18 @@ const Header = () => {
             to="/"
             className={({ isActive }) =>
               `${styles["c-header__link"]} ${
-                isActive ? styles.active : "c-link--active"
+                isActive ? styles["c-header__link--active"] : ""
               }`
             }
           >
             Home
           </NavLink>
-          <NavLink
-            to="/login"
-            className={({ isActive }) =>
-              `${styles["c-header__link"]} ${
-                isActive ? styles.active : "c-link--active"
-              }`
-            }
-          >
-            Login
-          </NavLink>
+
           <NavLink
             to="/dashboard"
             className={({ isActive }) =>
               `${styles["c-header__link"]} ${
-                isActive ? styles.active : "c-link--active"
+                isActive ? styles["c-header__link--active"] : ""
               }`
             }
           >
@@ -51,18 +42,30 @@ const Header = () => {
             to="/tasks"
             className={({ isActive }) =>
               `${styles["c-header__link"]} ${
-                isActive ? styles.active : "c-link--active"
+                isActive ? styles["c-header__link--active"] : ""
               }`
             }
           >
             Tasks
           </NavLink>
         </div>
-        {isAuthenticated && (
-          <button onClick={handleLogout} className={buttonStyles["c-button"]}>
-            Logout
-          </button>
-        )}
+        <div>
+          {isAuthenticated ? (
+            <button
+              onClick={handleLogout}
+              className={`${buttonStyles["c-button"]} ${buttonStyles["c-button--login"]}`}
+            >
+              <i className="bi bi-person-x c-icon"></i>
+            </button>
+          ) : (
+            <NavLink
+              to="/login"
+              className={`${buttonStyles["c-button"]} ${buttonStyles["c-button--login"]}`}
+            >
+              <i className="bi bi-person c-header__icon"></i>
+            </NavLink>
+          )}
+        </div>
       </nav>{" "}
     </div>
   );
