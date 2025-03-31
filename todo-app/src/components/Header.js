@@ -1,8 +1,10 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import styles from "./Header.module.scss";
 import buttonStyles from "./Button.module.scss";
+import { useAuth } from "../context/AuthContext";
 
-const Header = ({ isAuthenticated, setIsAuthenticated }) => {
+const Header = () => {
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -44,6 +46,16 @@ const Header = ({ isAuthenticated, setIsAuthenticated }) => {
             }
           >
             Dashboard
+          </NavLink>
+          <NavLink
+            to="/tasks"
+            className={({ isActive }) =>
+              `${styles["c-header__link"]} ${
+                isActive ? styles.active : "c-link--active"
+              }`
+            }
+          >
+            Tasks
           </NavLink>
         </div>
         {isAuthenticated && (
